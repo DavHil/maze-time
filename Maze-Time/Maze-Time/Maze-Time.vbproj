@@ -80,6 +80,7 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Module\Datenbank.vb" />
+    <Compile Include="Module\Level.vb" />
     <Compile Include="Module\Musik.vb" />
     <Compile Include="Module\Verzeichnis.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
