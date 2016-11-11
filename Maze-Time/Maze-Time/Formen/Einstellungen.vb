@@ -16,7 +16,7 @@
     Dim PB_Zurueck As New PictureBox
 
 
-    Private Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+    Private Sub Form1_Load(sender As Object, e As EventArgs)
         With Me
             .FormBorderStyle = FormBorderStyle.None
             .Width = Datenbank.Einstellungen_Breite
@@ -56,7 +56,7 @@
     End Sub
 
 #Region "Launcher Überschrift"
-    Private Sub Launcher_Paint(sender As Object, e As PaintEventArgs) Handles Me.Paint
+    Private Sub Launcher_Paint(sender As Object, e As PaintEventArgs)
 
         G = e.Graphics
 
@@ -292,7 +292,7 @@
     End Sub
 
     Private Sub CheckBoxDebug_CheckedChanged(sender As Object, e As EventArgs) Handles CheckBoxDebug.CheckedChanged
-        Datenbank.Spiel_Debug_Modus = CheckBoxDebug.Checked
+
     End Sub
 
 #End Region
@@ -302,8 +302,7 @@
     End Sub
 
     Private Sub CheckBoxUpdate_CheckedChanged(sender As Object, e As EventArgs) Handles CheckBoxUpdate.CheckedChanged
-        Datenbank.Spiel_AutoUpdate = CheckBoxUpdate.Checked
-        Launcher.UpdateLabelChange()
+
     End Sub
 #End Region
 
@@ -314,8 +313,7 @@
     End Sub
 
     Private Sub CheckBoxMusik_CheckedChanged(sender As System.Object, e As System.EventArgs) Handles CheckBoxMusik.CheckedChanged
-        Datenbank.Spiel_Musik = CheckBoxMusik.Checked
-        musik_mode()
+
     End Sub
 
     Private Sub musik_mode()
@@ -334,8 +332,7 @@
     End Sub
 
     Private Sub CheckBoxSounds_CheckedChanged(sender As System.Object, e As System.EventArgs) Handles CheckBoxSounds.CheckedChanged
-        Datenbank.Spiel_Sounds = CheckBoxMusik.Checked
-        Sounds_mode()
+
     End Sub
 
     Private Sub Sounds_mode()
@@ -354,31 +351,14 @@
     End Sub
 
     Private Sub BChangePfad_Click(sender As System.Object, e As System.EventArgs) Handles BChangePfad.Click
-        If TxtBoxPfad.Text <> Datenbank.Spiel_Pfad Then
-            Select Case MsgBox("Soll der Pfad des Spiel wirklich zu" & TxtBoxPfad.Text & "geändert werden?", MsgBoxStyle.YesNo, "Pfad Ändern?")
-                Case MsgBoxResult.Yes
-                    Datenbank.Spiel_Pfad = TxtBoxPfad.Text
-                    MsgBox("Der neue Pfad lautet " & "'" & TxtBoxPfad.Text & "'" & vbCrLf & "Das Spiel wird neugestartet", MsgBoxStyle.Information)
-                    Application.Restart()
-                Case MsgBoxResult.No
-                    MsgBox("Es wurde keine Änderung vorgenommen!", MsgBoxStyle.Information)
-            End Select
-        Else
-            MsgBox("Es wurde keine Änderung vorgenommen!", MsgBoxStyle.Information)
-        End If
+
     End Sub
 
 #End Region
 
 #Region "Hintergrundfarbe"
     Private Sub BChangeBackColor_Click(sender As System.Object, e As System.EventArgs) Handles BChangeBackColor.Click
-        If ColorDialogBackColor.ShowDialog() = DialogResult.OK Then
-            Datenbank.Launcher_Hintergrundfarbe = ColorDialogBackColor.Color
-            Launcher.BackColor = ColorDialogBackColor.Color
-            Me.BackColor = ColorDialogBackColor.Color
 
-            MsgBox("Hintergrundfarbe wurde geändert ", MsgBoxStyle.Information)
-        End If
     End Sub
 
     Private Sub BDefaultBackColor_Click(sender As System.Object, e As System.EventArgs) Handles BDefaultBackColor.Click
@@ -391,13 +371,7 @@
 
 #Region "Schriftfarbe"
     Private Sub BChangeForeColor_Click(sender As System.Object, e As System.EventArgs) Handles BChangeForeColor.Click
-        If ColorDialogForeColor.ShowDialog() = DialogResult.OK Then
-            Datenbank.Launcher_Schriftfarbe = ColorDialogForeColor.Color
-            Launcher.ForeColor = ColorDialogForeColor.Color
-            Me.ForeColor = ColorDialogForeColor.Color
 
-            MsgBox("Schriftfarbe wurde geändert !", MsgBoxStyle.Information)
-        End If
     End Sub
 
     Private Sub BDefaultForeColor_Click(sender As System.Object, e As System.EventArgs) Handles BDefaultForeColor.Click
@@ -439,52 +413,6 @@
     End Sub
 
     Private Sub BChangeSize_Click(sender As Object, e As EventArgs) Handles BChangeSize.Click
-
-        If rb_Vollbild.Checked = True Then
-            Datenbank.Spiel_Vollbild = True
-            Datenbank.Spiel_Fenstervollbild = False
-            Datenbank.Spiel_Fenster = False
-            Datenbank.Spiel_FensterModus = "Vollbild"
-        ElseIf rb_VollbildFenster.Checked = True Then
-            Datenbank.Spiel_Vollbild = False
-            Datenbank.Spiel_Fenstervollbild = True
-            Datenbank.Spiel_Fenster = False
-            Datenbank.Spiel_FensterModus = "Vollbild-Fenster"
-        ElseIf rb_Fenster.Checked = True Then
-            Datenbank.Spiel_Vollbild = False
-            Datenbank.Spiel_Fenstervollbild = False
-            Datenbank.Spiel_Fenster = True
-            Datenbank.Spiel_FensterModus = "Fenster"
-        End If
-
-        If RB_1080p.Checked = True Then
-            Datenbank.Spielwelt_Breite = "1920"
-            Datenbank.Spielwelt_Höhe = "1080"
-            Datenbank.Spielmenu_Breite = "1920"
-            Datenbank.Spielmenu_Höhe = "1080"
-            Datenbank.Level_Breite = "1920"
-            Datenbank.Level_Höhe = "1080"
-            Datenbank.Level_Bild_Größe = "128"
-            MsgBox("Auflösung wurde in" & "'" & Datenbank.Spielwelt_Breite & " x " & Datenbank.Spielwelt_Höhe & "'" & "geändert!" & vbCrLf & "Fenstermodus: " & Datenbank.Spiel_FensterModus, MsgBoxStyle.Information)
-        ElseIf RB_720p.Checked = True Then
-            Datenbank.Spielwelt_Breite = "1280"
-            Datenbank.Spielwelt_Höhe = "720"
-            Datenbank.Spielmenu_Breite = "1280"
-            Datenbank.Spielmenu_Höhe = "720"
-            Datenbank.Level_Breite = "1280"
-            Datenbank.Level_Höhe = "720"
-            Datenbank.Level_Bild_Größe = "64"
-            MsgBox("Auflösung wurde in" & "'" & Datenbank.Spielwelt_Breite & " x " & Datenbank.Spielwelt_Höhe & "'" & "geändert!" & vbCrLf & "Fenstermodus: " & Datenbank.Spiel_FensterModus, MsgBoxStyle.Information)
-        ElseIf RB_600p.Checked = True Then
-            Datenbank.Spielwelt_Breite = "800"
-            Datenbank.Spielwelt_Höhe = "600"
-            Datenbank.Spielmenu_Breite = "800"
-            Datenbank.Spielmenu_Höhe = "600"
-            Datenbank.Level_Breite = "800"
-            Datenbank.Level_Höhe = "600"
-            Datenbank.Level_Bild_Größe = "32"
-            MsgBox("Auflösung wurde in" & "'" & Datenbank.Spielwelt_Breite & " x " & Datenbank.Spielwelt_Höhe & "'" & "geändert!" & vbCrLf & "Fenstermodus: " & Datenbank.Spiel_FensterModus, MsgBoxStyle.Information)
-        End If
 
     End Sub
 
