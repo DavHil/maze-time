@@ -92,7 +92,113 @@ Public Class Launcher
 
     End Sub
 
+#Region "Update Funktion"
 
+    Sub UpdatePrüfung()
+        Try
+            If My.Computer.Network.IsAvailable = True Then 'Prüft ob Netzwerk-Verbindung besteht
+                'Definitionen
+                Dim FTPLink As String
+                Dim DownloadVerzeichnisVersion As String
+                Dim AktuelleVersion As String
+                Dim NeueVersion As String
+
+                'Zuweisungen
+                FTPLink = "http://pckiste.bplaced.net/AutoUpdate/Version.txt" 'FTP-DownloadLink zur Text-Datei mit evtl. neuer Version
+                DownloadVerzeichnisVersion = My.Application.Info.DirectoryPath & "\Temp\Version.txt" 'System.Text.Encoding.GetEncoding(1252) 'Wohin die Text-Datei heruntergeladen werden soll
+                AktuelleVersion = Application.ProductVersion 'Die derzeit verwendete Version
+
+                'Download der Version.txt
+                My.Computer.Network.DownloadFile(FTPLink, DownloadVerzeichnisVersion, "", "", False, 3000, True) 'Download der Text-Datei (Adresse, Ziel, Benutzername, Passwort, UI, Timeout, Overwrite) lädt alle Dateien nicht nur binäre
+
+                'Einlesen der Version.txt in RTB1
+                Dim LeseVerzeichnis As String = My.Application.Info.DirectoryPath & "\Temp\Version.txt"
+                Dim SRText As String
+                Using SR As New System.IO.StreamReader(LeseVerzeichnis)
+                    SRText = SR.ReadToEnd()
+                End Using
+                RTB_Version.Text = SRText
+
+                'Schreiben in PrüfenVersion.txt aus RTB1
+                Dim Schreiben As String = My.Application.Info.DirectoryPath & "\Temp\PrüfenVersion.txt"
+                Using SW As New System.IO.StreamWriter(Schreiben, False, System.Text.Encoding.GetEncoding(1252)) '(True = Anfügen der Daten / False = Überschreiben der Daten)
+                    SW.Write(SRText)
+                End Using
+
+                'Auf Version prüfen
+                INI.Pfad = My.Application.Info.DirectoryPath & "\Temp\PrüfenVersion.txt" 'Pfad zum Auslesen der Text-Datei (hier wird die Klasse "INIDatei" verwendet - siehe ältere Videos)
+                NeueVersion = INI.WertLesen("Info", "Version", "") 'Liest Version aus
+
+                Select Case True 'Vergleicht Version
+                    Case AktuelleVersion = NeueVersion Or AktuelleVersion > NeueVersion 'Gleiche 
+                        Versiongroesse.Text = "Spiel ist auf dem aktuellen Stand"
+                    Case AktuelleVersion < NeueVersion 'Alte Version auf PC
+                        Dim Result As MsgBoxResult
+                        Result = MsgBox("Es ist eine neue Version (" & NeueVersion & ") verfügbar. Soll diese heruntergeladen werden?", MsgBoxStyle.Information Or MsgBoxStyle.YesNo, "ABC")
+
+                        If Result = MsgBoxResult.Yes = True Then
+                            Dim DownloadLink As String 'Downloadlink zu Update.exe
+                            Dim DownloadVerzeichnisUpdate As String 'Zielpfad, wohin die Update.exe heruntergeladen werden soll
+
+                            DownloadLink = INI.WertLesen("Info", "DownloadLink", "") 'Liest DownloadLinks aus
+                            DownloadVerzeichnisUpdate = My.Application.Info.DirectoryPath & "\Temp\Update.exe" 'Gibt Zielpfad an
+
+                            'Schaltet Progressbar visible
+                            VersionProgressbar.Value = 0
+                            VersionProgressbar.Maximum = 100
+                            VersionProgressbar.Visible = True
+                            Versiongroesse.Visible = True
+
+                            HTTPClient = New WebClient 'HttpClient (lädt nur binäre Dateien)
+                            Try
+                                HTTPClient.DownloadFileAsync(New Uri(DownloadLink), DownloadVerzeichnisUpdate) 'Lädt Update herunter (asynchron, damit Anzeige in ProgressBar möglich ist - MultiThreading)
+                            Catch ex As Exception
+                                MsgBox(ex.Message)
+                            End Try
+                        Else
+                            Exit Sub
+                        End If
+                    Case Else 'Nicht definierter Zustand
+                        Exit Sub
+                End Select
+            Else
+                MsgBox("Ihr PC hat derzeit keinen Internetzugriff.", MsgBoxStyle.Exclamation, "ABC")
+                Exit Sub
+            End If
+        Catch ex As Exception
+        End Try
+    End Sub
+
+    Private Sub HTTPClient_DownloadFileCompleted(ByVal sender As Object, ByVal e As System.ComponentModel.AsyncCompletedEventArgs) Handles HTTPClient.DownloadFileCompleted
+        'Wenn Download fertig
+        Try
+            MsgBox("Das Update wurde erfolgreich heruntergeladen. Der Installer wird nun gestartet. Folgen Sie den Anweisungen auf dem Bildschirm.", MsgBoxStyle.Information, "ABC")
+
+            Dim UpdateStarten As String
+            UpdateStarten = My.Application.Info.DirectoryPath & "\Temp\Update.exe"
+
+            Process.Start(UpdateStarten) 'Ausführen des Updates
+            Me.Dispose() 'Beendet das Programm für das Update
+        Catch ex As Exception
+            MsgBox(ex.Message, MsgBoxStyle.Critical, "TextCrypter")
+        End Try
+    End Sub
+
+    Private Sub HTTPClient_DownloadProgressChanged(ByVal sender As Object, ByVal e As System.Net.DownloadProgressChangedEventArgs) Handles HTTPClient.DownloadProgressChanged
+        'Progressbar
+        With VersionProgressbar 'Berechnet Anzeige für Fortschritt
+            .Value = e.ProgressPercentage
+
+            Dim TotalBytes As Long = e.TotalBytesToReceive / 1024 'Fragt Gesamtgröße (Bytes) ab, die es zu empfangen gilt (/1024 um KiloBytes zu erhalten)
+            Dim Bytes As Long = e.BytesReceived / 1024 'Fragt Bytes ab, die schon angekommen sind
+            If TotalBytes < 1 Then TotalBytes = 1 'Wenn kleiner 1 Byte, dann 1 Byte
+            If Bytes < 1 Then Bytes = 1 'Wenn kleiner 1 Byte, dann 1 Byte
+
+            Versiongroesse.Text = Bytes.ToString & " KB von " & TotalBytes.ToString & " KB" 'Anzeige im Label
+
+            VersionProgressbar.Refresh() 'Refresh für ProgressBar
+        End With
+    End Sub
 
 #End Region
 
