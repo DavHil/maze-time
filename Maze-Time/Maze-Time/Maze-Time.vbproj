@@ -138,6 +138,9 @@
     <EmbeddedResource Include="Formen\Level_Menu.resx">
       <DependentUpon>Level_Menu.vb</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Formen\Spiel_Menu.resx">
+      <DependentUpon>Spiel_Menu.vb</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="My Project\Resources.resx">
       <Generator>VbMyResourcesResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.vb</LastGenOutput>
