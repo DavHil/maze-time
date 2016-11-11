@@ -104,7 +104,7 @@ Public Class Launcher
                 Dim NeueVersion As String
 
                 'Zuweisungen
-                FTPLink = "http://pckiste.bplaced.net/AutoUpdate/Version.txt" 'FTP-DownloadLink zur Text-Datei mit evtl. neuer Version
+                FTPLink = "https://raw.githubusercontent.com/DavHil/maze-time/master/Maze-Time/Maze-Time/Version.txt" 'FTP-DownloadLink zur Text-Datei mit evtl. neuer Version
                 DownloadVerzeichnisVersion = My.Application.Info.DirectoryPath & "\Temp\Version.txt" 'System.Text.Encoding.GetEncoding(1252) 'Wohin die Text-Datei heruntergeladen werden soll
                 AktuelleVersion = Application.ProductVersion 'Die derzeit verwendete Version
 
