@@ -1,3 +1,3 @@
 ﻿[Info]
-Version = 1.1
+Version = 1.0
 DownloadLink = http://pckiste.bplaced.net/AutoUpdate/Update.exe
